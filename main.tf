@@ -13,15 +13,18 @@ resource "azurerm_network_interface" "network_interfaces" {
   ip_forwarding_enabled          = each.value.ip_forwarding_enabled
   tags                           = each.value.tags
 
-  ip_configuration {
-    gateway_load_balancer_frontend_ip_configuration_id = each.value.ip_configuration.gateway_load_balancer_frontend_ip_configuration_id
-    name                                               = each.value.ip_configuration.name
-    primary                                            = each.value.ip_configuration.primary
-    private_ip_address                                 = each.value.ip_configuration.private_ip_address
-    private_ip_address_allocation                      = each.value.ip_configuration.private_ip_address_allocation
-    private_ip_address_version                         = each.value.ip_configuration.private_ip_address_version
-    public_ip_address_id                               = each.value.ip_configuration.public_ip_address_id
-    subnet_id                                          = each.value.ip_configuration.subnet_id
+  dynamic "ip_configuration" {
+    for_each = each.value.ip_configuration
+    content {
+      gateway_load_balancer_frontend_ip_configuration_id = ip_configuration.value.gateway_load_balancer_frontend_ip_configuration_id
+      name                                               = ip_configuration.value.name
+      primary                                            = ip_configuration.value.primary
+      private_ip_address                                 = ip_configuration.value.private_ip_address
+      private_ip_address_allocation                      = ip_configuration.value.private_ip_address_allocation
+      private_ip_address_version                         = ip_configuration.value.private_ip_address_version
+      public_ip_address_id                               = ip_configuration.value.public_ip_address_id
+      subnet_id                                          = ip_configuration.value.subnet_id
+    }
   }
 }
 
