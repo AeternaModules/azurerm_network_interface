@@ -1,3 +1,7 @@
+output "network_interfaces_id" {
+  description = "Map of id values across all network_interfaces, keyed the same as var.network_interfaces"
+  value       = { for k, v in azurerm_network_interface.network_interfaces : k => v.id }
+}
 output "network_interfaces_accelerated_networking_enabled" {
   description = "Map of accelerated_networking_enabled values across all network_interfaces, keyed the same as var.network_interfaces"
   value       = { for k, v in azurerm_network_interface.network_interfaces : k => v.accelerated_networking_enabled }
