@@ -29,13 +29,13 @@ EOT
     location                       = string
     name                           = string
     resource_group_name            = string
-    accelerated_networking_enabled = optional(bool) # Default: false
+    accelerated_networking_enabled = optional(bool)
     auxiliary_mode                 = optional(string)
     auxiliary_sku                  = optional(string)
     dns_servers                    = optional(list(string))
     edge_zone                      = optional(string)
     internal_dns_name_label        = optional(string)
-    ip_forwarding_enabled          = optional(bool) # Default: false
+    ip_forwarding_enabled          = optional(bool)
     tags                           = optional(map(string))
     ip_configuration = list(object({
       gateway_load_balancer_frontend_ip_configuration_id = optional(string)
@@ -43,11 +43,19 @@ EOT
       primary                                            = optional(bool)
       private_ip_address                                 = optional(string)
       private_ip_address_allocation                      = string
-      private_ip_address_version                         = optional(string) # Default: "IPv4"
+      private_ip_address_version                         = optional(string)
       public_ip_address_id                               = optional(string)
       subnet_id                                          = optional(string)
     }))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.network_interfaces : (
+        length(v.ip_configuration) >= 1
+      )
+    ])
+    error_message = "Each ip_configuration list must contain at least 1 items"
+  }
   # --- Unconfirmed validation candidates, derived from azurerm_network_interface's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
